@@ -152,7 +152,7 @@ class TestConsole(unittest.TestCase):
                                                       (pla_id)]
                                   .longitude), float)
             self.assertEqual(FileStorage().all()["Place.{}".format(pla_id)]
-                             .longitude, 122.431297)
+                             .longitude, -122.431297)
             self.consol.onecmd('destroy Place {}'.format(pla_id))
 
     def test_show(self):
