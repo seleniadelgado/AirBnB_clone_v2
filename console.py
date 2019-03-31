@@ -48,7 +48,7 @@ class HBNBCommand(cmd.Cmd):
                 if dAttr[1][1] == '"' and dAttr [1][-1] == '"':
                     dAttr[1].strip('"')
                     dAttr[1].replace("_"," ")
-                    eval("newinstance.{} = str({})".format(dAttr[0], dAttr[1])
+                    eval("newinstance.{} = str({})".format(dAttr[0], dAttr[1]))
             obj.save()
             print("{}".format(obj.id))
         except SyntaxError:
