@@ -57,7 +57,7 @@ class TestFileStorage(unittest.TestCase):
         storage.new(state)
         stAll = storage.all(State)
         self.assertIn("State.{}".format(state.id), stAll.keys())
-        self.asserNotIn("User.{}".format(user.id), stAll.keys())
+        self.assertNotIn("User.{}".format(user.id), stAll.keys())
 
     def test_new(self):
         """test when new is created"""
@@ -107,6 +107,7 @@ class TestFileStorage(unittest.TestCase):
         storage.delete(user)
         counta = len(storage.all().keys())
         self.assertGreater(countb, counta)
+        storage.delete()
 
 if __name__ == "__main__":
     unittest.main()
