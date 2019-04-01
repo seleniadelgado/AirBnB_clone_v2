@@ -107,6 +107,7 @@ class TestFileStorage(unittest.TestCase):
         storage.delete(user)
         counta = len(storage.all().keys())
         self.assertGreater(countb, counta)
+        storage.delete()
 
 if __name__ == "__main__":
     unittest.main()
