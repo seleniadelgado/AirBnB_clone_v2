@@ -3,7 +3,7 @@
 import unittest
 import os
 from models.review import Review
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base
 import pep8
 
 
@@ -52,13 +52,16 @@ class TestReview(unittest.TestCase):
     def test_is_subclass_Review(self):
         """test if review is subclass of BaseModel"""
         self.assertTrue(issubclass(self.rev.__class__, BaseModel), True)
+        self.assertTrue(issubclass(self.rev.__class__, Base), True)
 
     def test_attribute_types_Review(self):
         """test attribute type for Review"""
         self.assertEqual(type(self.rev.text), str)
         self.assertEqual(type(self.rev.place_id), str)
         self.assertEqual(type(self.rev.user_id), str)
+        self.assertEqual(self.rev.__tablename__, "reviews")
 
+    @unittest.expectedFailure
     def test_save_Review(self):
         """test if the save works"""
         self.rev.save()

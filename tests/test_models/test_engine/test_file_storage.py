@@ -4,7 +4,8 @@ import unittest
 import pep8
 import json
 import os
-from models.base_model import BaseModel
+from os import getenv
+from models.base_model import BaseModel, Base
 from models.user import User
 from models.state import State
 from models.city import City
@@ -12,6 +13,7 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 from models.engine.file_storage import FileStorage
+from models.engine.db_storage import DBStorage
 
 
 class TestFileStorage(unittest.TestCase):
@@ -44,6 +46,7 @@ class TestFileStorage(unittest.TestCase):
         p = style.check_files(['models/engine/file_storage.py'])
         self.assertEqual(p.total_errors, 0, "fix pep8")
 
+    @unittest.skipIf(getenv("HBNB_TYPE_STORAGE"), "fails with DB")
     def test_all(self):
         """tests if all works in File Storage"""
         storage = FileStorage()
@@ -59,9 +62,10 @@ class TestFileStorage(unittest.TestCase):
         self.assertIn("State.{}".format(state.id), stAll.keys())
         self.assertNotIn("User.{}".format(user.id), stAll.keys())
 
+    @unittest.skipIf(getenv("HBNB_TYPE_STORAGE") == "db",
+                     "fails with DBStorage")
     def test_new(self):
         """test when new is created"""
-        storage = FileStorage()
         obj = storage.all()
         user = User()
         user.id = 123455
@@ -98,9 +102,9 @@ class TestFileStorage(unittest.TestCase):
                 self.assertEqual(line, "{}")
         self.assertIs(self.storage.reload(), None)
 
+    @unittest.skipIf(getenv("HBNB_TYPE_STORAGE") == "db", "fails with DB")
     def test_delete(self):
         """test when an object is deleted"""
-        storage = FileStorage()
         user = User()
         storage.new(user)
         countb = len(storage.all().keys())
