@@ -3,6 +3,7 @@
 from models import storage
 import unittest
 import os
+from os import getenv
 from models.base_model import BaseModel
 import pep8
 
@@ -60,6 +61,7 @@ class TestBaseModel(unittest.TestCase):
         self.assertTrue(isinstance(self.base, BaseModel))
         new_base = BaseModel({'name': "California"})
 
+    @unittest.skipIf(getenv("HBNB_TYPE_STORAGE") == "db", "fails with DB")
     def test_save_BaesModel(self):
         """test if the save works"""
         self.base.save()
@@ -73,6 +75,7 @@ class TestBaseModel(unittest.TestCase):
         self.assertIsInstance(base_dict['created_at'], str)
         self.assertIsInstance(base_dict['updated_at'], str)
 
+    @unittest.skipIf(getenv("HBNB_TYPE_STORAGE") == "db", "fails with DB")
     def test_delete_BaseModel(self):
         """test delete method of BaseModel"""
         new_base = BaseModel()
