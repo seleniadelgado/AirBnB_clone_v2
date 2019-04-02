@@ -48,7 +48,6 @@ class TestReview(unittest.TestCase):
         self.assertTrue('place_id' in self.rev.__dict__)
         self.assertTrue('text' in self.rev.__dict__)
         self.assertTrue('user_id' in self.rev.__dict__)
-        self.assertTrue(self.rev.__tablename__ == "reviews")
 
     def test_is_subclass_Review(self):
         """test if review is subclass of BaseModel"""
@@ -60,6 +59,7 @@ class TestReview(unittest.TestCase):
         self.assertEqual(type(self.rev.text), str)
         self.assertEqual(type(self.rev.place_id), str)
         self.assertEqual(type(self.rev.user_id), str)
+        self.assertEqual(self.rev.__tablename__, "reviews")
 
     @unittest.expectedFailure
     def test_save_Review(self):

@@ -30,7 +30,7 @@ class DBStorage:
 
     def all(self, cls=None):
         """All method for DBStorage class"""
-        obj_list=[]
+        obj_list = []
         classList = ["State", "City"]
         if cls:
             classList = [cls]
