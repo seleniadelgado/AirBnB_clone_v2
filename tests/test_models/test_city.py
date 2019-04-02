@@ -3,7 +3,7 @@
 import unittest
 import os
 from models.city import City
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base
 import pep8
 
 
@@ -50,6 +50,7 @@ class TestCity(unittest.TestCase):
     def test_is_subclass_City(self):
         """test if City is subclass of Basemodel"""
         self.assertTrue(issubclass(self.city.__class__, BaseModel), True)
+        self.assertTrue(issubclass(self.city.__class__, Base), True)
 
     def test_attribute_types_City(self):
         """test attribute type for City"""

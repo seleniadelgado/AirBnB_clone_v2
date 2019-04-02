@@ -26,10 +26,12 @@ class HBNBCommand(cmd.Cmd):
 
     def do_quit(self, line):
         """Quit command to exit the program"""
+        print()
         return True
 
     def do_EOF(self, line):
         """Quit command to exit the program at end of file"""
+        print()
         return True
 
     def do_create(self, line):
@@ -44,6 +46,8 @@ class HBNBCommand(cmd.Cmd):
             my_list = line.split(" ")
             obj = eval("{}()".format(my_list[0]))
             for attr in my_list[1:]:
+                if "=" not in attr:
+                    continue
                 dAttr = attr.split('=')
                 try:
                     if dAttr[1][0] == '"' and dAttr[1][-1] == '"':
@@ -142,6 +146,7 @@ class HBNBCommand(cmd.Cmd):
             args = line.split(" ")
             if args[0] not in self.all_classes:
                 raise NameError()
+            objects = storage.all(args[0])
             for key in objects:
                 name = key.split('.')
                 if name[0] == args[0]:

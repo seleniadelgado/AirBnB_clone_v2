@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """test for BaseModel"""
+from models import storage
 import unittest
 import os
 from models.base_model import BaseModel
@@ -47,10 +48,17 @@ class TestBaseModel(unittest.TestCase):
         self.assertTrue(hasattr(BaseModel, "__init__"))
         self.assertTrue(hasattr(BaseModel, "save"))
         self.assertTrue(hasattr(BaseModel, "to_dict"))
+        self.assertTrue(hasattr(BaseModel, "__str__"))
+        self.assertTrue(hasattr(BaseModel, "__repr__"))
+        self.assertTrue(hasattr(BaseModel, "id"))
+        self.assertTrue(hasattr(BaseModel, "id"))
+        self.assertTrue(hasattr(BaseModel, "created_at"))
+        self.assertTrue(hasattr(BaseModel, "updated_at"))
 
     def test_init_BaseModel(self):
         """test if the base is an type BaseModel"""
         self.assertTrue(isinstance(self.base, BaseModel))
+        new_base = BaseModel({'name': "California"})
 
     def test_save_BaesModel(self):
         """test if the save works"""
@@ -60,10 +68,19 @@ class TestBaseModel(unittest.TestCase):
     def test_to_dict_BaseModel(self):
         """test if dictionary works"""
         base_dict = self.base.to_dict()
+        self.assertNotIn("_sa_instance_state", base_dict.keys())
         self.assertEqual(self.base.__class__.__name__, 'BaseModel')
         self.assertIsInstance(base_dict['created_at'], str)
         self.assertIsInstance(base_dict['updated_at'], str)
 
+    def test_delete_BaseModel(self):
+        """test delete method of BaseModel"""
+        new_base = BaseModel()
+        new_base.save()
+        countb = len(storage.all().keys())
+        new_base.delete()
+        counta = len(storage.all().keys())
+        self.assertGreater(countb, counta)
 
 if __name__ == "__main__":
     unittest.main()
