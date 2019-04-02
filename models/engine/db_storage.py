@@ -30,12 +30,15 @@ class DBStorage:
 
     def all(self, cls=None):
         """All method for DBStorage class"""
-        if not cls:
-            objs = self.__session.query(State, City).all()
-        else:
+        obj_list=[]
+        classList = ["State", "City"]
+        if cls:
+            classList = [cls]
+        for cls in classList:
             objs = self.__session.query(eval(cls)).all()
+            obj_list.extend(objs)
         retdict = {}
-        for obj in objs:
+        for obj in obj_list:
             retdict["{}.{}".format(cls, obj.id)] = obj
         return retdict
 
