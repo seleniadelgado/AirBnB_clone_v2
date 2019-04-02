@@ -3,7 +3,7 @@
 import unittest
 import os
 from models.state import State
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base
 import pep8
 
 
@@ -40,15 +40,15 @@ class TestState(unittest.TestCase):
 
     def test_attributes_State(self):
         """checking if State have attributes"""
-        self.assertTrue('id' in self.state.__dict__)
-        self.assertTrue('created_at' in self.state.__dict__)
-        self.assertTrue('updated_at' in self.state.__dict__)
-        self.assertTrue('name' in self.state.__dict__)
-        self.assertTrue('__tablename__' in self.state.__dict__)
+        self.assertTrue('id' in self.state.__dict__.keys())
+        self.assertTrue('created_at' in self.state.__dict__.keys())
+        self.assertTrue('updated_at' in self.state.__dict__.keys())
+        self.assertTrue('name' in self.state.__dict__.keys())
+        self.assertTrue('__tablename__' in dir(self.state))
 
     def test_is_attribute_null(self):
         """checks if attribute is null"""
-        self.assertTrue(name)
+        self.assertTrue(self.state.name)
 
     def test_is_subclass_State(self):
         """test if State is subclass of BaseModel"""

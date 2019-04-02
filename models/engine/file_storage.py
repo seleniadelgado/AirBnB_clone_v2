@@ -29,7 +29,7 @@ class FileStorage:
             return self.__objects
         retdict = {}
         for key in self.__objects.keys():
-            if cls.__name__ in key:
+            if cls in key:
                 retdict[key] = self.__objects[key]
         return retdict
 
