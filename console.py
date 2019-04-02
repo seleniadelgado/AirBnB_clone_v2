@@ -44,6 +44,8 @@ class HBNBCommand(cmd.Cmd):
             my_list = line.split(" ")
             obj = eval("{}()".format(my_list[0]))
             for attr in my_list[1:]:
+                if "=" not in attr:
+                    continue
                 dAttr = attr.split('=')
                 try:
                     if dAttr[1][0] == '"' and dAttr[1][-1] == '"':
