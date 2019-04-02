@@ -2,6 +2,12 @@
 """Definition of DataBase Storage class"""
 from os import getenv
 from models.base_model import Base
+from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
@@ -20,22 +26,17 @@ class DBStorage:
                                               getenv("HBNB_MYSQL_DB")),
                                       pool_pre_ping=True)
         if getenv("HBNB_ENV") == "test":
-            Base.metadata.drop_all(engine)
+            Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
         """All method for DBStorage class"""
         if not cls:
-            objs = self.__session.query(User,
-                                        State,
-                                        City,
-                                        Amenity,
-                                        Place,
-                                        Review)
+            objs = self.__session.query(State, City).all()
         else:
-            objs = self.__session.query(cls.__name__)
+            objs = self.__session.query(eval(cls)).all()
         retdict = {}
         for obj in objs:
-            retdict["{}.{}".format(cls.__name__, obj.id)] = obj
+            retdict["{}.{}".format(cls, obj.id)] = obj
         return retdict
 
     def new(self, obj):
@@ -54,7 +55,8 @@ class DBStorage:
 
     def reload(self):
         """Create tables in database and create database session"""
-        Base.metadata.create_all(engine)
-        session_factory = sessionmaker(bind=engine, expire_on_commit=False)
+        Base.metadata.create_all(self.__engine)
+        session_factory = sessionmaker(bind=self.__engine,
+                                       expire_on_commit=False)
         Session = scoped_session(session_factory)
         self.__session = Session()
