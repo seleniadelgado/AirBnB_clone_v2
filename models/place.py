@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """This is the place class"""
 import models
+from models.amenity import Amenity
 from os import getenv
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey, Integer, Float, Table
@@ -66,7 +67,7 @@ class Place(BaseModel, Base):
                     retList.append(objAm[key])
             return retList
 
-        @amenitides.setter
+        @amenities.setter
         def amenities(self, obj):
             """amenity_ids setter handles id append"""
             if type(obj).__name__ == Amenity:
