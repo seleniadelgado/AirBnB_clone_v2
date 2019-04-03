@@ -26,6 +26,7 @@ class TestConsole(unittest.TestCase):
     def setUpClass(cls):
         """setup for the test"""
         cls.consol = HBNBCommand()
+        cls.storage = FileStorage()
 
     @classmethod
     def teardown(cls):
@@ -72,7 +73,6 @@ class TestConsole(unittest.TestCase):
             self.consol.onecmd("quit")
             self.assertEqual('\n', f.getvalue())
 
-    @unittest.expectedFailure
     def test_create(self):
         """Test create command inpout"""
         with patch('sys.stdout', new=StringIO()) as f:
@@ -81,79 +81,98 @@ class TestConsole(unittest.TestCase):
                 "** class name missing **\n", f.getvalue())
         with patch('sys.stdout', new=StringIO()) as f:
             self.consol.onecmd("create asdfsfsd")
-            self.assertEqual(
-                "** class doesn't exist **\n", f.getvalue())
+            self.assertEqual("** class doesn't exist **\n", f.getvalue())
         with patch('sys.stdout', new=StringIO()) as f:
-            self.consol.onecmd("create User")
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.consol.onecmd("all User")
-            self.assertEqual(
-                "[[User]", f.getvalue()[:7])
-        with patch('sys.stdout', new=StringIO()) as f:
-            countb = len(FileStorage().all().keys())
-            self.consol.onecmd('create State name="California"')
-            sta_id = f.getvalue().strip("\n")
-            counta = len(FileStorage().all().keys())
+            "Count number of objects, create State, compare counts"
+            countb = len(self.storage.all().keys())
+            self.consol.onecmd("create State name='California'")
+            counta = len(self.storage.all().keys())
             self.assertGreater(counta, countb)
-            self.assertEqual(type(FileStorage().all()["State.{}"
-                                                      .format(sta_id)].name),
-                             str)
-            self.assertEqual(FileStorage().all()["State.{}".format(sta_id)]
-                             .name, "California")
-            self.consol.onecmd('destroy State {}'.format(sta_id))
+            "save State ID for city creation"
+            state_id = f.getvalue().strip("\n")
         with patch('sys.stdout', new=StringIO()) as f:
-            countb = len(FileStorage().all().keys())
-            self.consol.onecmd('create Place city_id="0001" user_id="0001"\
+            """test output of all after creation"""
+            self.consol.onecmd("all State")
+            self.assertEqual("[[State]", f.getvalue()[:8])
+            stateObj_id = "State.{}".format(state_id)
+            self.assertEqual(type(self.storage.all()[stateObj_id].name), str)
+            self.assertEqual(self.storage.all()[stateObj_id].name, "California")
+        with patch('sys.stdout', new=StringIO()) as f:
+            "Count number of objects, create City, compare counts"
+            countb = len(storage.all().keys())
+            self.consol.onecmd('''create City
+                               name="San Francisco"
+                               state_id="{}"'''.format(state_id))
+            counta = len(storage.all().keys())
+            self.assertGreater(counta, countb)
+            "save City ID for Place creation"
+            city_id = f.getvalue().strip("\n")
+        with patch('sys.stdout', new=StringIO()) as f:
+            """test output of all after creation"""
+            self.consol.onecmd("all City")
+            self.assertEqual("[[City]", f.getvalue()[:7])
+            cityObj_id = "City.{}".format(city_id)
+            self.assertEqual(type(storage.all()[cityObj_id].name), str)
+            self.assertEqual(storage.all()[cityObj_id].name, "San Francisco")
+            self.assertEqual(type(storage.all()[cityObj_id].state_id), str)
+            self.assertEqual(storage.all()[cityObj_id].state_id, "{}"
+                             .format(state_id))
+        with patch('sys.stdout', new=StringIO()) as f:
+            "Count number of objects, create User, compare counts"
+            countb = len(storage.all().keys())
+            self.consol.onecmd("create User email='California' password='CA'")
+            counta = len(storage.all().keys())
+            self.assertGreater(counta, countb)
+            "save User ID for place creation"
+            user_id = f.getvalue().strip("\n")
+        with patch('sys.stdout', new=StringIO()) as f:
+            """test output of all after creation"""
+            self.consol.onecmd("all User")
+            self.assertEqual("[[User]", f.getvalue()[:7])
+            userObj_id = "User.{}".format(user_id)
+            self.assertEqual(type(storage.all()[userObj_id].email), str)
+            self.assertEqual(storage.all()[stateObj_id].email, "California")
+            self.assertEqual(type(storage.all()[userObj_id].password), str)
+            self.assertEqual(storage.all()[stateObj_id].password, "CA")
+        with patch('sys.stdout', new=StringIO()) as f:
+            countb = len(storage.all().keys())
+            self.consol.onecmd('create Place city_id="{}" user_id="{}"\
                                name="My_little_house" number_rooms=4\
                                number_bathrooms=2 max_guest=10\
                                price_by_night=300 latitude=37.773972\
-                               longitude=-122.431297')
+                               longitude=-122.431297'.format(city_id, user_id))
             pla_id = f.getvalue().strip("\n")
-            counta = len(FileStorage().all().keys())
+            counta = len(storage.all().keys())
             self.assertGreater(counta, countb)
-            self.assertEqual(type(FileStorage().all()["Place.{}"
-                                                      .format(pla_id)].name),
-                             str)
-            self.assertEqual(FileStorage().all()["Place.{}".format(pla_id)]
-                             .name, "My little house")
-            self.assertEqual(type(FileStorage().all()["Place.{}".format
-                                                      (pla_id)].city_id), str)
-            self.assertEqual(FileStorage().all()["Place.{}".format(pla_id)]
-                             .city_id, "0001")
-            self.assertEqual(type(FileStorage().all()["Place.{}".format
-                                                      (pla_id)].user_id), str)
-            self.assertEqual(FileStorage().all()["Place.{}".format(pla_id)]
-                             .user_id, "0001")
-            self.assertEqual(type(FileStorage().all()["Place.{}".format
-                                                      (pla_id)].number_rooms),
+            placeObj_id = "Place.{}".format(pla_id)
+            self.assertEqual(type(storage.all()[placeObj_id].name), str)
+            self.assertEqual(storage.all()[placeObj_id].name,
+                             "My little house")
+            self.assertEqual(type(storage.all()[placeObj_id].city_id), str)
+            self.assertEqual(storage.all()[placeObj_id].city_id, "{}".city_id)
+            self.assertEqual(type(storage).all()[placeObj_id].user_id, str)
+            self.assertEqual(storage.all()[placeObj_id].user_id,
+                             "{}".format(user_id))
+            self.assertEqual(type(storage.all()[placeObj_id].number_rooms),
                              int)
-            self.assertEqual(FileStorage().all()["Place.{}".format(pla_id)]
-                             .number_rooms, 4)
-            self.assertEqual(type(FileStorage().all()["Place.{}".format
-                                                      (pla_id)]
-                                  .number_bathrooms), int)
-            self.assertEqual(FileStorage().all()["Place.{}".format(pla_id)]
-                             .number_bathrooms, 2)
-            self.assertEqual(type(FileStorage().all()["Place.{}".format
-                                                      (pla_id)]
-                                  .max_guest), int)
-            self.assertEqual(FileStorage().all()["Place.{}".format(pla_id)]
-                             .max_guest, 10)
-            self.assertEqual(type(FileStorage().all()["Place.{}".format
-                                                      (pla_id)]
-                                  .price_by_night), int)
-            self.assertEqual(FileStorage().all()["Place.{}".format(pla_id)]
-                             .price_by_night, 300)
-            self.assertEqual(type(FileStorage().all()["Place.{}".format
-                                                      (pla_id)]
-                                  .latitude), float)
-            self.assertEqual(FileStorage().all()["Place.{}".format(pla_id)]
-                             .latitude, 37.773972)
-            self.assertEqual(type(FileStorage().all()["Place.{}".format
-                                                      (pla_id)]
-                                  .longitude), float)
-            self.assertEqual(FileStorage().all()["Place.{}".format(pla_id)]
-                             .longitude, -122.431297)
+            self.assertEqual(storage.all()[placeObj_id].number_rooms, 4)
+            self.assertEqual(type(storage.all()[placeObj_id].number_bathrooms),
+                             int)
+            self.assertEqual(stoarage.all()[placeObj_id].number_bathrooms, 2)
+            self.assertEqual(type(storage.all()[placeObj_id].max_guest), int)
+            self.assertEqual(FileStorage().all()[placeObj_id].max_guest, 10)
+            self.assertEqual(type(storage.all()[placeObj_id].price_by_night),
+                             int)
+            self.assertEqual(storage.all()[placeObj_id].price_by_night, 300)
+            self.assertEqual(type(FileStorage().all()[placeObj_id].latitude),
+                             float)
+            self.assertEqual(storage.all()[placeObj_id].latitude, 37.773972)
+            self.assertEqual(type(storage().all()[placeObj_id].longitude),
+                             float)
+            self.assertEqual(storage.all()[placeObj_id].longitude, -122.431297)
+            self.consol.onecmd('destroy User {}'.format(user_id))
+            self.consol.onecmd('destroy City {}'.format(city_id))
+            self.consol.onecmd('destroy State {}'.format(state_id))
             self.consol.onecmd('destroy Place {}'.format(pla_id))
 
     def test_show(self):
@@ -201,7 +220,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual("** class doesn't exist **\n", f.getvalue())
         with patch('sys.stdout', new=StringIO()) as f:
             self.consol.onecmd("all State")
-            self.assertNotEqual("[]\n", f.getvalue())
+            self.assertEqual("[]\n", f.getvalue())
 
     def test_update(self):
         """Test update command inpout"""
@@ -252,7 +271,7 @@ class TestConsole(unittest.TestCase):
                 "** class doesn't exist **\n", f.getvalue())
         with patch('sys.stdout', new=StringIO()) as f:
             self.consol.onecmd("State.count()")
-            self.assertEqual("0\n", f.getvalue())
+            self.assertEqual("1\n", f.getvalue())
 
     def test_z_show(self):
         """Test alternate show command input"""
@@ -276,7 +295,6 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(
                 "** no instance found **\n", f.getvalue())
 
-    @unittest.expectedFailure
     def test_update(self):
         """Test alternate destroy command inpout"""
         with patch('sys.stdout', new=StringIO()) as f:
