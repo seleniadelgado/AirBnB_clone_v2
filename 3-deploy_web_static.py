@@ -5,14 +5,12 @@ import os
 
 env.hosts = ['35.237.164.107', '35.243.176.56']
 
+
 def do_deploy(archive_path):
     """distributes an archive to the webservers"""
-    print('tio;')
     if os.path.exists(archive_path) is False:
-        print(archive_path)
         return False
     try:
-        print('try')
         upload = put(archive_path, "/tmp/")
         n = archive_path[20:-4]
         run("sudo mkdir -p /data/web_static/releases/web_static_{}/".format(n))
@@ -27,9 +25,9 @@ def do_deploy(archive_path):
         run("sudo ln -s /data/web_static/releases/"
             "web_static_{}/ /data/web_static/current".format(n))
         return True
-    except Exception as e:
-        print("E is for everyone {}:", e)
+    except:
         return False
+
 
 def do_pack():
     """Fabric script that generates a .tgx archive"""
@@ -39,7 +37,8 @@ def do_pack():
     if result.failed:
         return None
     else:
-        return "versions/web_static_{}".format(n)
+        return "versions/web_static_{}.tgz".format(n)
+
 
 def deploy():
     """creates and distributes an archive to your web servers, using deploy"""
