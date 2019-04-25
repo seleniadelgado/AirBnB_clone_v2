@@ -3,6 +3,7 @@
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
+import models
 
 
 class State(BaseModel, Base):
@@ -20,4 +21,5 @@ class State(BaseModel, Base):
         instances with
         matching state_id
         """
-        return [c for c in cities if c.state_id == self.id]
+        cities = models.storage.all(models.City)
+        return [c for c in cities.values() if c.state_id == self.id]
