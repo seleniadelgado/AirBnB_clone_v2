@@ -34,6 +34,8 @@ class DBStorage:
         classList = ["State", "City"]
         if cls:
             classList = [cls]
+        print(type(cls))
+        print("over\n\n\n\n")
         for cls in classList:
             objs = self.__session.query(eval(cls)).all()
             obj_list.extend(objs)
@@ -66,4 +68,4 @@ class DBStorage:
 
     def close(self):
         """public method to remove a private session"""
-        self.__session.remove()
+        self.__session.close()
