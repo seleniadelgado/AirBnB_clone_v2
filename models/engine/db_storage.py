@@ -34,10 +34,11 @@ class DBStorage:
         classList = ["State", "City"]
         if cls:
             classList = [cls]
-        print(type(cls))
-        print("over\n\n\n\n")
         for cls in classList:
-            objs = self.__session.query(eval(cls)).all()
+            if type(cls) == str:
+                objs = self.__session.query(eval(cls)).all()
+            else:
+                objs = self.__session.query(cls).all()
             obj_list.extend(objs)
         retdict = {}
         for obj in obj_list:
